@@ -36,8 +36,8 @@ struct Element
 };
 
 
-using List0 = intrusive::List<Element, struct tag0>;
-using List1 = intrusive::List<Element, struct tag1>;
+using XList = intrusive::List<Element, struct tag0>;
+using YList = intrusive::List<Element, struct tag1>;
 
 
 std::ostream& operator<<(std::ostream& stream, const Element& e) {
@@ -94,7 +94,7 @@ std::vector<const Type*> MakeVector(std::initializer_list<const Type*> ls) {
 
 
 void TestSizes() {
-	List0 list;
+	XList list;
 	Element e1;
 	Element e2;
 	Element e3;
@@ -125,7 +125,7 @@ void TestSizes() {
 
 
 void TestLink() {
-	List0 list;
+	XList list;
 	Element e1;
 	Element e2;
 	Element e3;
@@ -140,7 +140,7 @@ void TestLink() {
 
 
 void TestLinkUnlink() {
-	List0 list;
+	XList list;
 	Element e1;
 	Element e2;
 	Element e3;
@@ -162,7 +162,7 @@ void TestLinkUnlink() {
 
 
 void TestRemove() {
-	List0 list;
+	XList list;
 	Element e1;
 	Element e2;
 	Element e3;
@@ -180,7 +180,7 @@ void TestRemove() {
 	EXPECT_EQ(&e3, &list.Front());
 	EXPECT_EQ(&e3, &list.Back());
 
-	list.Remove(List0::iterator(&e1));
+	list.Remove(XList::iterator(&e1));
 	EXPECT_EQ(&e3, &list.Front());
 	EXPECT_EQ(&e3, &list.Back());
 
@@ -192,8 +192,8 @@ void TestRemove() {
 }
 
 void TestCount() {
-	List0 list1;
-	List0 list2;
+	XList list1;
+	XList list2;
 
 	Element e1;
 	Element e2;
@@ -215,9 +215,9 @@ void TestCount() {
 
 
 void TestIterators() {
-	List0 list;
-	List0::iterator li;
-	List0::iterator lj;
+	XList list;
+	XList::iterator li;
+	XList::iterator lj;
 
 	Element e1;
 	Element e2;
@@ -248,9 +248,9 @@ void TestIterators() {
 }
 
 void TestConstIterators() {
-	List0 list;
-	List0::const_iterator li;
-	List0::const_iterator lj;
+	XList list;
+	XList::const_iterator li;
+	XList::const_iterator lj;
 
 	Element e1;
 	Element e2;
@@ -281,8 +281,8 @@ void TestConstIterators() {
 }
 
 void TestContainment() {
-	List0 list1;
-	List0 list2;
+	XList list1;
+	XList list2;
 
 	Element e1;
 	Element e2;
@@ -306,8 +306,8 @@ void TestContainment() {
 }
 
 void TestMultipleContainment() {
-	List0 list1;
-	List1 list2;
+	XList list1;
+	YList list2;
 
 	Element e1;
 	Element e2;
@@ -334,7 +334,7 @@ void TestRangeIterator() {
 	using Vector = std::vector<Element*>;
 	using ConstVector = std::vector<const Element*>;
 
-	List0 list;
+	XList list;
 
 	Element e1;
 	Element e2;
@@ -359,8 +359,8 @@ void TestRangeIterator() {
 }
 
 void TestInsertion() {
-	List0 list;
-	List0::iterator it;
+	XList list;
+	XList::iterator it;
 
 	Element e1;
 	Element e2;
@@ -409,11 +409,11 @@ void TestInsertion() {
 
 
 void TestFind() {
-	List0 list;
-	List0 list2;
-	const List0& const_list = list;
-	List0::iterator it;
-	List0::const_iterator const_it;
+	XList list;
+	XList list2;
+	const XList& const_list = list;
+	XList::iterator it;
+	XList::const_iterator const_it;
 
 	Element e1;
 	Element e2;
@@ -431,8 +431,8 @@ void TestFind() {
 	const_it = const_list.begin();
 	++const_it;
 
-	EXPECT_EQ(it, List0::iterator(&e2));
-	EXPECT_EQ(const_it, List0::const_iterator(&e2));
+	EXPECT_EQ(it, XList::iterator(&e2));
+	EXPECT_EQ(const_it, XList::const_iterator(&e2));
 	EXPECT_EQ(const_list.cbegin(), const_list.begin());
 	EXPECT_EQ(const_list.cend(), const_list.end());
 
@@ -445,7 +445,7 @@ void TestFind() {
 }
 
 void TestSplice() {
-	List0 list1, list2;
+	XList list1, list2;
 	Element e1;
 	Element e2;
 	Element e3;
@@ -457,7 +457,7 @@ void TestSplice() {
 	list1.LinkBack(e4);
 
 	// splice to different list
-	auto i3 = List0::iterator(&e3);
+	auto i3 = XList::iterator(&e3);
 	list2.Splice(list2.begin(), list1.begin(), i3);
 	EXPECT_EQ(MakeVector({&e3, &e4}), MakeVector(list1));
 	EXPECT_EQ(MakeVector({&e1, &e2}), MakeVector(list2));
@@ -467,8 +467,8 @@ void TestSplice() {
 	EXPECT_EQ(MakeVector<Element>({}), MakeVector(list2));
 
 	// splice to same list
-	auto i4 = List0::iterator(&e4);
-	i3 = List0::iterator(&e3);
+	auto i4 = XList::iterator(&e4);
+	i3 = XList::iterator(&e3);
 	list1.Splice(i4, list1.begin(), i3);
 	EXPECT_EQ(MakeVector({&e3, &e1, &e2, &e4}), MakeVector(list1));
 
@@ -484,6 +484,40 @@ void TestSplice() {
 	EXPECT_EQ(MakeVector({&e3, &e1, &e2, &e4}), MakeVector(list1));
 }
 
+void TestMoveConstructAndAssign() {
+	XList list1;
+	Element e1;
+	Element e2;
+	Element e3;
+	Element e4;
+	auto vec1 = MakeVector({&e1, &e2, &e3});
+
+	list1.LinkBack(e1);
+	list1.LinkBack(e2);
+	list1.LinkBack(e3);
+	EXPECT_EQ(MakeVector({&e1, &e2, &e3}), MakeVector(list1));
+
+	XList list2(std::move(list1));
+	XList list3;
+	EXPECT_TRUE(list1.IsEmpty());
+
+	list1.LinkBack(e4);
+	EXPECT_EQ(1, list1.Size());
+	EXPECT_EQ(MakeVector({&e1, &e2, &e3}), MakeVector(list2));
+	EXPECT_TRUE(list3.IsEmpty());
+
+	list3 = std::move(list2);
+	EXPECT_EQ(MakeVector({&e1, &e2, &e3}), MakeVector(list3));
+
+	e4 = std::move(e3);
+	EXPECT_EQ(MakeVector({&e1, &e2, &e4}), MakeVector(list3));
+
+	Element e5(std::move(e2));
+	EXPECT_EQ(MakeVector({&e1, &e5, &e4}), MakeVector(list3));
+
+	e4 = std::move(e1);
+	EXPECT_EQ(MakeVector({&e4, &e5}), MakeVector(list3));
+}
 
 int main() {
 	TestSizes();
@@ -499,4 +533,5 @@ int main() {
 	TestInsertion();
 	TestFind();
 	TestSplice();
+	TestMoveConstructAndAssign();
 }

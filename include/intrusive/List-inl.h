@@ -11,6 +11,31 @@ Node<Type, Tag>::Node() {
 }
 
 template<typename Type, typename Tag>
+Node<Type, Tag>::Node(Node&& other) {
+	if (other.IsLinked()) {
+		Link(other.prev_, this);
+		Link(this, other.next_);
+		Link(&other, &other);
+	}
+	else {
+		Link(this, this);
+	}
+}
+
+template<typename Type, typename Tag>
+Node<Type, Tag>& Node<Type, Tag>::operator=(Node&& other) {
+	if (&other != this) {
+		Unlink();
+		if (other.IsLinked()) {
+			Link(other.prev_, this);
+			Link(this, other.next_);
+			Link(&other, &other);
+		}
+	}
+	return *this;
+}
+
+template<typename Type, typename Tag>
 void Node<Type, Tag>::Unlink() {
 	prev_->next_ = next_;
 	next_->prev_ = prev_;

@@ -15,7 +15,9 @@ class Node {
 public:
 	Node();
 	Node(const Node&) = delete;
+	Node(Node&&);
 	Node& operator=(const Node&) = delete;
+	Node& operator=(Node&&);
 
 	void Unlink();
 	bool IsLinked() const;
@@ -70,7 +72,13 @@ public:
 	using const_iterator = Iterator<const Type, Tag>;
 
 	List() = default;
+	List(List&&) = default;
+	List(const List&) = delete;
 	~List();
+
+	List& operator=(const List&) = delete;
+	List& operator=(List&&) = default;
+
 
 	// O(1)
 	void UnlinkFront();
