@@ -1,6 +1,7 @@
 #include "intrusive/List.h"
 #include <iostream>
 #include <vector>
+#include <initializer_list>
 
 
 template<typename U, typename V>
@@ -72,6 +73,25 @@ template<typename Type, typename Tag>
 std::ostream& operator<<(std::ostream& stream, const intrusive::Iterator<Type, Tag>& it) {
 	return stream << (&*it);
 }
+
+template<typename Type, typename Tag>
+std::vector<const Type*> MakeVector(const intrusive::List<Type, Tag>& ls) {
+	std::vector<const Type*> vec;
+	for (auto& item : ls) {
+		vec.push_back(&item);
+	}
+	return vec;
+}
+
+template<typename Type>
+std::vector<const Type*> MakeVector(std::initializer_list<const Type*> ls) {
+	std::vector<const Type*> vec;
+	for (auto* item : ls) {
+		vec.push_back(item);
+	}
+	return vec;
+}
+
 
 void TestSizes() {
 	List0 list;
@@ -311,6 +331,9 @@ void TestMultipleContainment() {
 }
 
 void TestRangeIterator() {
+	using Vector = std::vector<Element*>;
+	using ConstVector = std::vector<const Element*>;
+
 	List0 list;
 
 	Element e1;
@@ -323,16 +346,65 @@ void TestRangeIterator() {
 	list.LinkBack(e3);
 	list.LinkFront(e4);
 
-	std::vector<Element*> vec0, expect0 = { &e4, &e2, &e1, &e3 };
-	std::vector<const Element*> vec1, expect1 = { &e4, &e2, &e1, &e3 };
+	Vector vec0;
+	ConstVector vec1;
 
 	for (auto& e : list) {
 		vec0.push_back(&e);
 		vec1.push_back(&e);
 	}
 
-	EXPECT_EQ(expect0, vec0);
-	EXPECT_EQ(expect1, vec1);
+	EXPECT_EQ(Vector({&e4, &e2, &e1, &e3}), vec0);
+	EXPECT_EQ(ConstVector({&e4, &e2, &e1, &e3}), vec1);
+}
+
+void TestInsertion() {
+	List0 list;
+	List0::iterator it;
+
+	Element e1;
+	Element e2;
+	Element e3;
+	Element e4;
+
+	list.LinkBack(e1);
+	list.LinkBack(e2);
+	list.LinkBack(e3);
+	EXPECT_EQ(MakeVector({ &e1, &e2, &e3 }), MakeVector(list));
+
+	it = list.begin();
+	list.Insert(it, e4);
+	EXPECT_EQ(MakeVector({ &e4, &e1, &e2, &e3 }), MakeVector(list));
+
+	it = list.begin();
+	EXPECT_EQ(&e4, &*it);
+
+	list.Insert(it, e4);
+	EXPECT_EQ(MakeVector({ &e4, &e1, &e2, &e3 }), MakeVector(list));
+
+	++it;
+	EXPECT_EQ(&e1, &*it);
+
+	list.Insert(it, e4);
+	EXPECT_EQ(MakeVector({ &e4, &e1, &e2, &e3 }), MakeVector(list));
+
+	++it;
+	EXPECT_EQ(&e2, &*it);
+
+	list.Insert(it, e4);
+	EXPECT_EQ(MakeVector({ &e1, &e4, &e2, &e3 }), MakeVector(list));
+
+	++it;
+	EXPECT_EQ(&e3, &*it);
+
+	list.Insert(it, e4);
+	EXPECT_EQ(MakeVector({ &e1, &e2, &e4, &e3 }), MakeVector(list));
+
+	++it;
+	EXPECT_EQ(list.end(), it);
+
+	list.Insert(it, e4);
+	EXPECT_EQ(MakeVector({ &e1, &e2, &e3, &e4 }), MakeVector(list));
 }
 
 
@@ -347,4 +419,5 @@ int main() {
 	TestContainment();
 	TestMultipleContainment();
 	TestRangeIterator();
+	TestInsertion();
 }

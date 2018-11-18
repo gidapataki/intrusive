@@ -79,6 +79,7 @@ public:
 	void LinkBack(Node& u);
 	bool IsEmpty() const;
 	void Splice(iterator pos, iterator first, iterator last);
+	void Insert(iterator pos, Node& u);
 
 	Type& Front();
 	Type& Back();

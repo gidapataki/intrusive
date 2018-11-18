@@ -233,6 +233,15 @@ typename List<Type, Tag>::iterator List<Type, Tag>::Remove(iterator it) {
 }
 
 template<typename Type, typename Tag>
+void List<Type, Tag>::Insert(iterator pos, Node& u) {
+	if (pos.node_ != &u && pos.node_->prev_ != &u) {
+		u.Unlink();
+		Node::Link(pos.node_->prev_, &u);
+		Node::Link(&u, pos.node_);
+	}
+}
+
+template<typename Type, typename Tag>
 void List<Type, Tag>::Splice(iterator pos, iterator first, iterator last) {
 	if (first == last) {
 		return;
