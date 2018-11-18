@@ -444,6 +444,45 @@ void TestFind() {
 	EXPECT_EQ(list.end(), list.Find(e3));
 }
 
+void TestSplice() {
+	List0 list1, list2;
+	Element e1;
+	Element e2;
+	Element e3;
+	Element e4;
+
+	list1.LinkBack(e1);
+	list1.LinkBack(e2);
+	list1.LinkBack(e3);
+	list1.LinkBack(e4);
+
+	// splice to different list
+	auto i3 = List0::iterator(&e3);
+	list2.Splice(list2.begin(), list1.begin(), i3);
+	EXPECT_EQ(MakeVector({&e3, &e4}), MakeVector(list1));
+	EXPECT_EQ(MakeVector({&e1, &e2}), MakeVector(list2));
+
+	list1.Splice(list1.begin(), list2.begin(), list2.end());
+	EXPECT_EQ(MakeVector({&e1, &e2, &e3, &e4}), MakeVector(list1));
+	EXPECT_EQ(MakeVector<Element>({}), MakeVector(list2));
+
+	// splice to same list
+	auto i4 = List0::iterator(&e4);
+	i3 = List0::iterator(&e3);
+	list1.Splice(i4, list1.begin(), i3);
+	EXPECT_EQ(MakeVector({&e3, &e1, &e2, &e4}), MakeVector(list1));
+
+	// last iterator equals pos in the same list
+	auto it = list1.begin();
+	++it;
+	list1.Splice(it, list1.begin(), it);
+	EXPECT_EQ(MakeVector({&e3, &e1, &e2, &e4}), MakeVector(list1));
+
+	// first / last are the same
+	++(it = list1.begin());
+	list1.Splice(list1.begin(), it, it);
+	EXPECT_EQ(MakeVector({&e3, &e1, &e2, &e4}), MakeVector(list1));
+}
 
 
 int main() {
@@ -459,4 +498,5 @@ int main() {
 	TestRangeIterator();
 	TestInsertion();
 	TestFind();
+	TestSplice();
 }
