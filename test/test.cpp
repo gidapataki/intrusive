@@ -2,23 +2,45 @@
 #include <iostream>
 
 
-struct Tag0 {};
-struct Tag1 {};
-struct Tag2 {};
-
-
-struct A
-	: public intrusive::Node<A, Tag0>
-	, public intrusive::Node<A, Tag1>
-	, public intrusive::Node<A, Tag2>
-{
-	int x = 0;
-};
-
-std::ostream& operator<<(std::ostream& stream, const A& a) {
-	return stream << a.x;
+template<typename U, typename V>
+void expect_eq(int line, const U& expected, const V& actual) {
+	if (!(expected == actual)) {
+		std::cerr << "Error in line " << line << std::endl;
+		std::cerr << "  expected: " << expected << std::endl;
+		std::cerr << "    actual: " << actual << std::endl;
+	}
 }
 
+template<typename U, typename V>
+void expect_ne(int line, const U& expected, const V& actual) {
+	if (!(expected != actual)) {
+		std::cerr << "Error in line " << line << std::endl;
+		std::cerr << "  expected: " << expected << std::endl;
+		std::cerr << "    actual: " << actual << std::endl;
+	}
+}
+
+#define EXPECT_EQ(u, v) expect_eq(__LINE__, u, v)
+#define EXPECT_NE(u, v) expect_ne(__LINE__, u, v)
+#define EXPECT_TRUE(v) expect_eq(__LINE__, true, v)
+#define EXPECT_FALSE(v) expect_eq(__LINE__, false, v)
+
+
+struct Element
+	: public intrusive::Node<Element, struct tag0>
+	, public intrusive::Node<Element, struct tag1>
+{
+	int value = 0;
+};
+
+
+using List0 = intrusive::List<Element, struct tag0>;
+using List1 = intrusive::List<Element, struct tag1>;
+
+
+std::ostream& operator<<(std::ostream& stream, const Element& e) {
+	return stream << a.value;
+}
 
 template<typename Type, typename Tag>
 std::ostream& operator<<(std::ostream& stream, const intrusive::List<Type, Tag>& ls) {
@@ -35,42 +57,39 @@ std::ostream& operator<<(std::ostream& stream, const intrusive::List<Type, Tag>&
 	return stream;
 }
 
+
+void TestSizes() {
+	List0 list;
+	Element e1;
+	Element e2;
+	Element e3;
+
+	EXPECT_TRUE(list.IsEmpty());
+	EXPECT_EQ(0, list.Size());
+
+	list.LinkBack(e1);
+	EXPECT_FALSE(list.IsEmpty());
+	EXPECT_EQ(1, list.Size());
+
+	list.LinkBack(e2);
+	EXPECT_FALSE(list.IsEmpty());
+	EXPECT_EQ(2, list.Size());
+
+	list.LinkBack(e3);
+	EXPECT_FALSE(list.IsEmpty());
+	EXPECT_EQ(3, list.Size());
+
+	list.UnlinkBack();
+	EXPECT_FALSE(list.IsEmpty());
+	EXPECT_EQ(2, list.Size());
+
+	list.Clear();
+	EXPECT_TRUE(list.IsEmpty());
+	EXPECT_EQ(0, list.Size());
+}
+
+
+
 int main() {
-	intrusive::List<A, Tag0> l0, s0;
-	intrusive::List<A, Tag1> l1;
-	intrusive::List<A, Tag2> l2;
-	A a0, a1, a2;
-
-	a0.x = 2;
-	a1.x = 3;
-	a2.x = 5;
-
-	l0.LinkBack(a0);
-	l0.LinkBack(a1);
-	l0.LinkBack(a2);
-	l0.LinkBack(a0);
-
-	l1.LinkBack(a0);
-	l1.LinkBack(a2);
-
-	l2.LinkBack(a0);
-
-	std::cout << l0 << std::endl;
-	std::cout << l1 << std::endl;
-	std::cout << l2 << std::endl;
-
-	l0.UnlinkFront();
-	l0.UnlinkBack();
-	std::cout << l0 << std::endl;
-
-
-	s0.LinkBack(a0);
-	s0.LinkBack(a1);
-	s0.LinkBack(a2);
-
-	auto it = s0.begin();
-	++it;
-
-	l0.Splice(l0.begin(), it, s0.end());
-	std::cout << l0 << " " << s0 << std::endl;
+	TestSizes();
 }
