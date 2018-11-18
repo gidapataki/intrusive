@@ -216,6 +216,39 @@ void TestIterators() {
 	EXPECT_EQ(&*lj, &e1);
 }
 
+void TestConstIterators() {
+	List0 list;
+	List0::const_iterator li;
+	List0::const_iterator lj;
+
+	Element e1;
+	Element e2;
+
+	list.LinkBack(e1);
+	list.LinkBack(e2);
+
+	lj = li = list.cbegin();
+	EXPECT_EQ(&*li, &e1);
+	EXPECT_EQ(&*lj, &e1);
+	EXPECT_EQ(li, lj);
+
+	lj = ++li;
+	EXPECT_EQ(&*li, &e2);
+	EXPECT_EQ(&*lj, &e2);
+
+	lj = li++;
+	EXPECT_EQ(li, list.cend());
+	EXPECT_EQ(&*lj, &e2);
+
+	lj = li--;
+	EXPECT_EQ(&*li, &e2);
+	EXPECT_EQ(lj, list.cend());
+
+	lj = --li;
+	EXPECT_EQ(&*li, &e1);
+	EXPECT_EQ(&*lj, &e1);
+}
+
 
 int main() {
 	TestSizes();
@@ -224,4 +257,5 @@ int main() {
 	TestRemove();
 	TestCount();
 	TestIterators();
+	TestConstIterators();
 }
