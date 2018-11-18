@@ -54,21 +54,21 @@ Iterator<Type, Tag>& Iterator<Type, Tag>::operator++() {
 
 template<typename Type, typename Tag>
 Iterator<Type, Tag>& Iterator<Type, Tag>::operator--() {
-	node_ = node_->next_;
+	node_ = node_->prev_;
 	return *this;
 }
 
 template<typename Type, typename Tag>
 Iterator<Type, Tag> Iterator<Type, Tag>::operator++(int) {
 	Iterator it = *this;
-	++it;
+	node_ = node_->next_;
 	return it;
 }
 
 template<typename Type, typename Tag>
 Iterator<Type, Tag> Iterator<Type, Tag>::operator--(int) {
 	Iterator it = *this;
-	--it;
+	node_ = node_->prev_;
 	return it;
 }
 

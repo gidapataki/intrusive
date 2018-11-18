@@ -57,6 +57,10 @@ std::ostream& operator<<(std::ostream& stream, const intrusive::List<Type, Tag>&
 	return stream;
 }
 
+template<typename Type, typename Tag>
+std::ostream& operator<<(std::ostream& stream, const intrusive::Iterator<Type, Tag>& it) {
+	return stream << (&*it);
+}
 
 void TestSizes() {
 	List0 list;
@@ -179,6 +183,39 @@ void TestCount() {
 }
 
 
+void TestIterators() {
+	List0 list;
+	List0::iterator li;
+	List0::iterator lj;
+
+	Element e1;
+	Element e2;
+
+	list.LinkBack(e1);
+	list.LinkBack(e2);
+
+	lj = li = list.begin();
+	EXPECT_EQ(&*li, &e1);
+	EXPECT_EQ(&*lj, &e1);
+	EXPECT_EQ(li, lj);
+
+	lj = ++li;
+	EXPECT_EQ(&*li, &e2);
+	EXPECT_EQ(&*lj, &e2);
+
+	lj = li++;
+	EXPECT_EQ(li, list.end());
+	EXPECT_EQ(&*lj, &e2);
+
+	lj = li--;
+	EXPECT_EQ(&*li, &e2);
+	EXPECT_EQ(lj, list.end());
+
+	lj = --li;
+	EXPECT_EQ(&*li, &e1);
+	EXPECT_EQ(&*lj, &e1);
+}
+
 
 int main() {
 	TestSizes();
@@ -186,4 +223,5 @@ int main() {
 	TestLinkUnlink();
 	TestRemove();
 	TestCount();
+	TestIterators();
 }

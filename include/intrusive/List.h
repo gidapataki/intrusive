@@ -102,7 +102,6 @@ public:
 	const_iterator Find(const Node& u) const;
 
 
-
 private:
 	Node head_;
 };
