@@ -249,6 +249,31 @@ void TestConstIterators() {
 	EXPECT_EQ(&*lj, &e1);
 }
 
+void TestContainment() {
+	List0 list1;
+	List0 list2;
+
+	Element e1;
+	Element e2;
+
+	list1.LinkBack(e1);
+	list1.LinkBack(e2);
+	EXPECT_EQ(&e1, &list1.Front());
+	EXPECT_EQ(&e2, &list1.Back());
+
+	list2.LinkBack(e1);
+	EXPECT_EQ(&e2, &list1.Front());
+	EXPECT_EQ(&e2, &list1.Back());
+	EXPECT_EQ(&e1, &list2.Front());
+	EXPECT_EQ(&e1, &list2.Back());
+
+	list2.LinkBack(e2);
+	EXPECT_TRUE(list1.IsEmpty());
+	EXPECT_TRUE(list1.IsEmpty());
+	EXPECT_EQ(&e1, &list2.Front());
+	EXPECT_EQ(&e2, &list2.Back());
+}
+
 
 int main() {
 	TestSizes();
@@ -258,4 +283,5 @@ int main() {
 	TestCount();
 	TestIterators();
 	TestConstIterators();
+	TestContainment();
 }
