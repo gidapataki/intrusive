@@ -39,7 +39,7 @@ using List1 = intrusive::List<Element, struct tag1>;
 
 
 std::ostream& operator<<(std::ostream& stream, const Element& e) {
-	return stream << a.value;
+	return stream << e.value;
 }
 
 template<typename Type, typename Tag>
@@ -89,7 +89,78 @@ void TestSizes() {
 }
 
 
+void TestLink() {
+	List0 list;
+	Element e1;
+	Element e2;
+	Element e3;
+
+	list.LinkBack(e1);
+	list.LinkBack(e2);
+	list.LinkFront(e3);
+
+	EXPECT_EQ(&e3, &list.Front());
+	EXPECT_EQ(&e2, &list.Back());
+}
+
+
+void TestLinkUnlink() {
+	List0 list;
+	Element e1;
+	Element e2;
+	Element e3;
+
+	list.LinkBack(e1);
+	list.LinkBack(e2);
+	list.LinkBack(e3);
+	EXPECT_EQ(&e1, &list.Front());
+	EXPECT_EQ(&e3, &list.Back());
+
+	list.UnlinkBack();
+	EXPECT_EQ(&e1, &list.Front());
+	EXPECT_EQ(&e2, &list.Back());
+
+	list.UnlinkFront();
+	EXPECT_EQ(&e2, &list.Front());
+	EXPECT_EQ(&e2, &list.Back());
+}
+
+
+void TestRemove() {
+	List0 list;
+	Element e1;
+	Element e2;
+	Element e3;
+	Element e4;
+
+	list.LinkBack(e1);
+	list.LinkBack(e2);
+	list.LinkBack(e3);
+
+	list.Remove(list.Find(e2));
+	EXPECT_EQ(&e1, &list.Front());
+	EXPECT_EQ(&e3, &list.Back());
+
+	list.Remove(list.Find(e1));
+	EXPECT_EQ(&e3, &list.Front());
+	EXPECT_EQ(&e3, &list.Back());
+
+	list.Remove(List0::iterator(&e1));
+	EXPECT_EQ(&e3, &list.Front());
+	EXPECT_EQ(&e3, &list.Back());
+
+	list.Remove(list.Find(e3));
+	EXPECT_TRUE(list.IsEmpty());
+
+	list.Remove(list.Find(e4));
+	EXPECT_TRUE(list.IsEmpty());
+}
+
+
 
 int main() {
 	TestSizes();
+	TestLink();
+	TestLinkUnlink();
+	TestRemove();
 }

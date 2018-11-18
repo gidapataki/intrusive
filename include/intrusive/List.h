@@ -44,7 +44,7 @@ public:
 		Node<Type, Tag>>::type;
 
 	Iterator() = default;
-	Iterator(Node* node);
+	explicit Iterator(Node* node);
 	Iterator& operator++();
 	Iterator& operator--();
 
@@ -79,6 +79,11 @@ public:
 	void LinkBack(Node& u);
 	bool IsEmpty() const;
 	void Splice(iterator pos, iterator first, iterator last);
+
+	Type& Front();
+	Type& Back();
+	const Type& Front() const;
+	const Type& Back() const;
 
 	iterator begin();
 	iterator end();

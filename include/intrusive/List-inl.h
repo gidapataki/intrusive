@@ -125,6 +125,26 @@ void List<Type, Tag>::LinkBack(Node& u) {
 }
 
 template<typename Type, typename Tag>
+Type& List<Type, Tag>::Front() {
+	return *head_.next_->Object();
+}
+
+template<typename Type, typename Tag>
+Type& List<Type, Tag>::Back() {
+	return *head_.prev_->Object();
+}
+
+template<typename Type, typename Tag>
+const Type& List<Type, Tag>::Front() const {
+	return *head_.next_->Object();
+}
+
+template<typename Type, typename Tag>
+const Type& List<Type, Tag>::Back() const {
+	return *head_.prev_->Object();
+}
+
+template<typename Type, typename Tag>
 typename List<Type, Tag>::iterator List<Type, Tag>::begin() {
 	return iterator(head_.next_);
 }
@@ -198,8 +218,10 @@ typename List<Type, Tag>::const_iterator List<Type, Tag>::Find(const Node& u) co
 template<typename Type, typename Tag>
 typename List<Type, Tag>::iterator List<Type, Tag>::Remove(iterator it) {
 	if (it.node_ != &head_) {
-		(it++).node_->Unlink();
-		return it;
+		auto next = it;
+		++next;
+		it.node_->Unlink();
+		return next;
 	}
 	return it;
 }
