@@ -13,40 +13,21 @@ template<typename Type, typename Tag> class Iterator;
 template<typename Type, typename Tag>
 class Node {
 public:
-	Node() {
-		next_ = prev_ = this;
-	}
-
+	Node();
 	Node(const Node&) = delete;
 	Node& operator=(const Node&) = delete;
 
-	void Unlink() {
-		prev_->next_ = next_;
-		next_->prev_ = prev_;
-		next_ = prev_ = this;
-	}
-
-	bool IsLinked() const {
-		return next_ != this;
-	}
-
-	Type* Object() {
-		return static_cast<Type*>(this);
-	}
-
-	const Type* Object() const {
-		return static_cast<const Type*>(this);
-	}
+	void Unlink();
+	bool IsLinked() const;
+	Type* Object();
+	const Type* Object() const;
 
 private:
 	friend class List<Type, Tag>;
 	friend class Iterator<Type, Tag>;
 	friend class Iterator<const Type, Tag>;
 
-	static void Link(Node* u, Node* v) {
-		u->next_ = v;
-		v->prev_ = u;
-	}
+	static void Link(Node* u, Node* v);
 
 	Node* next_;
 	Node* prev_;
@@ -62,45 +43,18 @@ public:
 		Node<Type, Tag>>::type;
 
 	Iterator() = default;
-	Iterator(Node* node) : node_(node) {}
+	Iterator(Node* node);
+	Iterator& operator++();
+	Iterator& operator--();
 
-	Iterator& operator++() {
-		node_ = node_->next_;
-		return *this;
-	}
+	Iterator operator++(int);
+	Iterator operator--(int);
 
-	Iterator& operator--() {
-		node_ = node_->next_;
-		return *this;
-	}
+	bool operator==(const Iterator& other) const;
+	bool operator!=(const Iterator& other) const;
 
-	Iterator operator++(int) {
-		Iterator it = *this;
-		++it;
-		return it;
-	}
-
-	Iterator operator--(int) {
-		Iterator it = *this;
-		--it;
-		return it;
-	}
-
-	bool operator==(const Iterator& other) const {
-		return other.node_ == node_;
-	}
-
-	bool operator!=(const Iterator& other) const {
-		return other.node_ != node_;
-	}
-
-	Type* operator->() const {
-		return node_->Object();
-	}
-
-	Type& operator*() const {
-		return *node_->Object();
-	}
+	Type* operator->() const;
+	Type& operator*() const;
 
 private:
 	Node* node_ = nullptr;
@@ -115,99 +69,30 @@ public:
 	using const_iterator = Iterator<const Type, Tag>;
 
 	List() = default;
-	~List() {
-		Clear();
-	}
+	~List();
 
-	void UnlinkFront() {
-		head_.next_->Unlink();
-	}
+	// O(1)
+	void UnlinkFront();
+	void UnlinkBack();
+	void LinkFront(Node& u);
+	void LinkBack(Node& u);
+	bool IsEmpty() const;
 
-	void UnlinkBack() {
-		head_.prev_->Unlink();
-	}
+	iterator begin();
+	iterator end();
+	const_iterator begin() const;
+	const_iterator end() const;
+	const_iterator cbegin() const;
+	const_iterator cend() const;
 
-	void LinkFront(Node& u) {
-		u.Unlink();
-		Node::Link(&u, head_.next_);
-		Node::Link(&head_, &u);
-	}
+	iterator Remove(iterator it);
 
-	void LinkBack(Node& u) {
-		u.Unlink();
-		Node::Link(head_.prev_, &u);
-		Node::Link(&u, &head_);
-	}
+	// O(n)
+	void Clear();
+	std::size_t Size() const;
+	iterator Find(const Node& u);
+	const_iterator Find(const Node& u) const;
 
-	iterator begin() {
-		return iterator(head_.next_);
-	}
-
-	iterator end() {
-		return iterator(&head_);
-	}
-
-	const_iterator begin() const {
-		return const_iterator(head_.next_);
-	}
-
-	const_iterator end() const {
-		return const_iterator(&head_);
-	}
-
-	const_iterator cbegin() const {
-		return const_iterator(head_.next_);
-	}
-
-	const_iterator cend() const {
-		return const_iterator(&head_);
-	}
-
-	bool IsEmpty() const {
-		return !head_.IsLinked();
-	}
-
-	void Clear() {
-		while (!IsEmpty()) {
-			head_.next_->Unlink();
-		}
-	}
-
-	std::size_t Size() const {
-		std::size_t size = 0;
-		for (auto it = begin(), it_end = end(); it != it_end; ++it) {
-			++size;
-		}
-		return size;
-	}
-
-	iterator Find(const Node& u) {
-		std::size_t size = 0;
-		for (auto it = begin(), it_end = end(); it != it_end; ++it) {
-			if (&*it == &u) {
-				return it;
-			}
-		}
-		return end();
-	}
-
-	const_iterator Find(const Node& u) const {
-		std::size_t size = 0;
-		for (auto it = begin(), it_end = end(); it != it_end; ++it) {
-			if (&*it == &u) {
-				return it;
-			}
-		}
-		return end();
-	}
-
-	iterator Erase(iterator it) {
-		if (it.node_ != &head_) {
-			(it++).node_->Unlink();
-			return it;
-		}
-		return it;
-	}
 
 private:
 	Node head_;
@@ -215,3 +100,5 @@ private:
 
 
 } // namespace
+
+#include "intrusive/List-inl.h"
