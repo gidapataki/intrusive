@@ -37,6 +37,7 @@ private:
 template<typename Type, typename Tag>
 class Iterator : public std::iterator<std::bidirectional_iterator_tag, Type> {
 public:
+	friend class List<typename std::remove_const<Type>::type, Tag>;
 	using Node = typename std::conditional<
 		std::is_const<Type>::value,
 		const Node<typename std::remove_const<Type>::type, Tag>,
@@ -77,6 +78,7 @@ public:
 	void LinkFront(Node& u);
 	void LinkBack(Node& u);
 	bool IsEmpty() const;
+	void Splice(iterator pos, iterator first, iterator last);
 
 	iterator begin();
 	iterator end();

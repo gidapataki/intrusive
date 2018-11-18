@@ -36,7 +36,7 @@ std::ostream& operator<<(std::ostream& stream, const intrusive::List<Type, Tag>&
 }
 
 int main() {
-	intrusive::List<A, Tag0> l0;
+	intrusive::List<A, Tag0> l0, s0;
 	intrusive::List<A, Tag1> l1;
 	intrusive::List<A, Tag2> l2;
 	A a0, a1, a2;
@@ -62,4 +62,15 @@ int main() {
 	l0.UnlinkFront();
 	l0.UnlinkBack();
 	std::cout << l0 << std::endl;
+
+
+	s0.LinkBack(a0);
+	s0.LinkBack(a1);
+	s0.LinkBack(a2);
+
+	auto it = s0.begin();
+	++it;
+
+	l0.Splice(l0.begin(), it, s0.end());
+	std::cout << l0 << " " << s0 << std::endl;
 }

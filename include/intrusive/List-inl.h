@@ -204,4 +204,19 @@ typename List<Type, Tag>::iterator List<Type, Tag>::Remove(iterator it) {
 	return it;
 }
 
+template<typename Type, typename Tag>
+void List<Type, Tag>::Splice(iterator pos, iterator first, iterator last) {
+	if (first == last) {
+		return;
+	}
+
+	Node* next = first.node_;
+	Node* prev = last.node_->prev_;
+
+	Node::Link(first.node_->prev_, last.node_);
+	Node::Link(pos.node_->prev_, next);
+	Node::Link(prev, pos.node_);
+}
+
+
 } // namespace
