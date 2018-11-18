@@ -5,25 +5,6 @@
 
 namespace intrusive {
 
-namespace detail {
-
-template<bool cond, typename T, typename U>
-struct If;
-
-template<typename T, typename U>
-struct If<true, T, U> {
-	using type = T;
-};
-
-template<typename T, typename U>
-struct If<false, T, U> {
-	using type = U;
-};
-
-} // namespace detail
-
-
-
 template<typename Type, typename Tag> class Node;
 template<typename Type, typename Tag> class List;
 template<typename Type, typename Tag> class Iterator;
@@ -75,7 +56,7 @@ private:
 template<typename Type, typename Tag>
 class Iterator : public std::iterator<std::bidirectional_iterator_tag, Type> {
 public:
-	using Node = typename detail::If<
+	using Node = typename std::conditional<
 		std::is_const<Type>::value,
 		const Node<typename std::remove_const<Type>::type, Tag>,
 		Node<Type, Tag>>::type;
