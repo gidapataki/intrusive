@@ -1,5 +1,6 @@
 #include "intrusive/List.h"
 #include <iostream>
+#include <vector>
 
 
 template<typename U, typename V>
@@ -42,10 +43,10 @@ std::ostream& operator<<(std::ostream& stream, const Element& e) {
 	return stream << e.value;
 }
 
-template<typename Type, typename Tag>
-std::ostream& operator<<(std::ostream& stream, const intrusive::List<Type, Tag>& ls) {
+template<typename Container>
+std::ostream& OutputToStream(std::ostream& stream, const Container& container) {
 	stream << "[";
-	auto it = ls.begin(), it_end = ls.end();
+	auto it = container.begin(), it_end = container.end();
 	if (it != it_end) {
 		stream << *it;
 		++it;
@@ -55,6 +56,16 @@ std::ostream& operator<<(std::ostream& stream, const intrusive::List<Type, Tag>&
 	}
 	stream << "]";
 	return stream;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& stream, const std::vector<T>& vec) {
+	return OutputToStream(stream, vec);
+}
+
+template<typename Type, typename Tag>
+std::ostream& operator<<(std::ostream& stream, const intrusive::List<Type, Tag>& ls) {
+	return OutputToStream(stream, ls);
 }
 
 template<typename Type, typename Tag>
@@ -274,7 +285,6 @@ void TestContainment() {
 	EXPECT_EQ(&e2, &list2.Back());
 }
 
-
 void TestMultipleContainment() {
 	List0 list1;
 	List1 list2;
@@ -300,6 +310,32 @@ void TestMultipleContainment() {
 	EXPECT_EQ(&e2, &list2.Back());
 }
 
+void TestRangeIterator() {
+	List0 list;
+
+	Element e1;
+	Element e2;
+	Element e3;
+	Element e4;
+
+	list.LinkBack(e1);
+	list.LinkFront(e2);
+	list.LinkBack(e3);
+	list.LinkFront(e4);
+
+	std::vector<Element*> vec0, expect0 = { &e4, &e2, &e1, &e3 };
+	std::vector<const Element*> vec1, expect1 = { &e4, &e2, &e1, &e3 };
+
+	for (auto& e : list) {
+		vec0.push_back(&e);
+		vec1.push_back(&e);
+	}
+
+	EXPECT_EQ(expect0, vec0);
+	EXPECT_EQ(expect1, vec1);
+}
+
+
 int main() {
 	TestSizes();
 	TestLink();
@@ -310,4 +346,5 @@ int main() {
 	TestConstIterators();
 	TestContainment();
 	TestMultipleContainment();
+	TestRangeIterator();
 }
