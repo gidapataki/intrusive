@@ -97,8 +97,10 @@ public:
 	// O(n)
 	void Clear();
 	std::size_t Size() const;
+	std::size_t Count(const Node& u) const;
 	iterator Find(const Node& u);
 	const_iterator Find(const Node& u) const;
+
 
 
 private:

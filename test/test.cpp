@@ -156,6 +156,28 @@ void TestRemove() {
 	EXPECT_TRUE(list.IsEmpty());
 }
 
+void TestCount() {
+	List0 list1;
+	List0 list2;
+
+	Element e1;
+	Element e2;
+	Element e3;
+	Element e4;
+
+	list1.LinkBack(e1);
+	list1.LinkBack(e2);
+	list2.LinkBack(e3);
+
+	EXPECT_EQ(1, list1.Count(e1));
+	EXPECT_EQ(1, list1.Count(e2));
+	EXPECT_EQ(0, list1.Count(e3));
+
+	EXPECT_EQ(0, list2.Count(e1));
+	EXPECT_EQ(0, list2.Count(e2));
+	EXPECT_EQ(1, list2.Count(e3));
+}
+
 
 
 int main() {
@@ -163,4 +185,5 @@ int main() {
 	TestLink();
 	TestLinkUnlink();
 	TestRemove();
+	TestCount();
 }

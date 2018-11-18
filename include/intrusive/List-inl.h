@@ -196,6 +196,12 @@ std::size_t List<Type, Tag>::Size() const {
 }
 
 template<typename Type, typename Tag>
+std::size_t List<Type, Tag>::Count(const Node& u) const {
+	auto it = Find(u);
+	return it == end() ? 0 : 1;
+}
+
+template<typename Type, typename Tag>
 typename List<Type, Tag>::iterator List<Type, Tag>::Find(const Node& u) {
 	for (auto it = begin(), it_end = end(); it != it_end; ++it) {
 		if (&*it == &u) {
