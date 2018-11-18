@@ -408,6 +408,44 @@ void TestInsertion() {
 }
 
 
+void TestFind() {
+	List0 list;
+	List0 list2;
+	const List0& const_list = list;
+	List0::iterator it;
+	List0::const_iterator const_it;
+
+	Element e1;
+	Element e2;
+	Element e3;
+	Element e4;
+
+	list.LinkBack(e1);
+	list.LinkBack(e2);
+	list.LinkBack(e3);
+	list2.LinkBack(e4);
+
+	it = list.begin();
+	++it;
+
+	const_it = const_list.begin();
+	++const_it;
+
+	EXPECT_EQ(it, List0::iterator(&e2));
+	EXPECT_EQ(const_it, List0::const_iterator(&e2));
+	EXPECT_EQ(const_list.cbegin(), const_list.begin());
+	EXPECT_EQ(const_list.cend(), const_list.end());
+
+	EXPECT_EQ(list.end(), list.Find(e4));
+	EXPECT_EQ(const_list.end(), const_list.Find(e4));
+	EXPECT_EQ(list2.begin(), list2.Find(e4));
+
+	list.Remove(list.Find(e3));
+	EXPECT_EQ(list.end(), list.Find(e3));
+}
+
+
+
 int main() {
 	TestSizes();
 	TestLink();
@@ -420,4 +458,5 @@ int main() {
 	TestMultipleContainment();
 	TestRangeIterator();
 	TestInsertion();
+	TestFind();
 }
