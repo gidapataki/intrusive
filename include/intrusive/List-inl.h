@@ -6,9 +6,10 @@ namespace intrusive {
 // Node
 
 template<typename Type, typename Tag>
-Node<Type, Tag>::Node() {
-	next_ = prev_ = this;
-}
+Node<Type, Tag>::Node()
+	: next_(this)
+	, prev_(this)
+{}
 
 template<typename Type, typename Tag>
 Node<Type, Tag>::Node(Node&& other) {
@@ -16,8 +17,7 @@ Node<Type, Tag>::Node(Node&& other) {
 		Link(other.prev_, this);
 		Link(this, other.next_);
 		Link(&other, &other);
-	}
-	else {
+	} else {
 		Link(this, this);
 	}
 }
