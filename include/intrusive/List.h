@@ -9,8 +9,10 @@ template<typename Type, typename Tag> class Node;
 template<typename Type, typename Tag> class List;
 template<typename Type, typename Tag> class Iterator;
 
+struct tag_default;
 
-template<typename Type, typename Tag>
+
+template<typename Type, typename Tag=tag_default>
 class Node {
 public:
 	Node();
@@ -36,7 +38,7 @@ private:
 };
 
 
-template<typename Type, typename Tag>
+template<typename Type, typename Tag=tag_default>
 class Iterator : public std::iterator<std::bidirectional_iterator_tag, Type> {
 public:
 	friend class List<typename std::remove_const<Type>::type, Tag>;
@@ -64,7 +66,7 @@ private:
 };
 
 
-template<typename Type, typename Tag>
+template<typename Type, typename Tag=tag_default>
 class List {
 public:
 	using Node = Node<Type, Tag>;

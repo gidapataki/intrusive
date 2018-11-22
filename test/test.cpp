@@ -29,14 +29,14 @@ void expect_ne(int line, const U& expected, const V& actual) {
 
 
 struct Element
-	: public intrusive::Node<Element, struct tag0>
+	: public intrusive::Node<Element>
 	, public intrusive::Node<Element, struct tag1>
 {
 	int value = 0;
 };
 
 
-using XList = intrusive::List<Element, struct tag0>;
+using XList = intrusive::List<Element>;
 using YList = intrusive::List<Element, struct tag1>;
 
 
