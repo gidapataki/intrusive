@@ -16,6 +16,7 @@ template<typename Type, typename Tag=tag_default>
 class Node {
 public:
 	Node();
+	~Node();
 	Node(const Node&) = delete;
 	Node(Node&&);
 	Node& operator=(const Node&) = delete;

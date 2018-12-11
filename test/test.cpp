@@ -519,6 +519,19 @@ void TestMoveConstructAndAssign() {
 	EXPECT_EQ(MakeVector({&e4, &e5}), MakeVector(list3));
 }
 
+void TestDestruct() {
+	XList list1;
+	Element e1;
+	{
+		Element e2;
+
+		list1.LinkBack(e1);
+		list1.LinkBack(e2);
+		EXPECT_EQ(MakeVector({&e1, &e2}), MakeVector(list1));
+	}
+	EXPECT_EQ(MakeVector({&e1}), MakeVector(list1));
+}
+
 int main() {
 	TestSizes();
 	TestLink();
@@ -534,4 +547,5 @@ int main() {
 	TestFind();
 	TestSplice();
 	TestMoveConstructAndAssign();
+	TestDestruct();
 }

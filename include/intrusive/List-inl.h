@@ -12,6 +12,12 @@ Node<Type, Tag>::Node()
 {}
 
 template<typename Type, typename Tag>
+Node<Type, Tag>::~Node() {
+	Unlink();
+}
+
+
+template<typename Type, typename Tag>
 Node<Type, Tag>::Node(Node&& other) {
 	if (other.IsLinked()) {
 		Link(other.prev_, this);
